@@ -1,0 +1,30 @@
+<div>
+    <div style="text-align: : center;">
+{
+{
+{
+        <img src="https://res.cloudinary.com/dehs0mpvl/image/upload/v1761384776/wqgundigcheaf5pj36jp.png" alt="company logo" style="width: 50%; height: auto;" />
+    </div>
+    <h3>Hi {{#if name}}
+  {{name}}
+{{else}}
+  ""
+{{/if}}
+</h3>
+    <p>{{message}}</p>
+    <p>
+        The below information is for you
+    </p>
+    <p>
+        <ul>
+  {{#each entriesData}}
+    <li><strong>{{this.[0]}}</strong>: {{this.[1]}}</li>
+  {{/each}}
+</ul>
+    </p>
+    <p>
+        Best Regards,
+        <br/>
+        Skin Beauty Cosmetics Team
+    </p>
+</div>
