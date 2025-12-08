@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1764671769841 implements MigrationInterface {
-    name = 'Migrations1764671769841'
+export class Migrations1765197827974 implements MigrationInterface {
+    name = 'Migrations1765197827974'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -53,6 +53,74 @@ export class Migrations1764671769841 implements MigrationInterface {
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "isDeleted" boolean NOT NULL DEFAULT false,
                 CONSTRAINT "PK_fb95d592ca9968398673eea44fb" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "tag" (
+                "id" SERIAL NOT NULL,
+                "name" character varying NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                CONSTRAINT "PK_8e4052373c579afc1471f526760" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "aid_service_tag" (
+                "id" SERIAL NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                "tagId" integer,
+                "aidServiceId" integer,
+                CONSTRAINT "PK_469ef1b7eb55b34f54c3dda25fc" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "profile_cluster" (
+                "id" SERIAL NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                "clusterId" integer,
+                "profileId" integer,
+                CONSTRAINT "PK_569df9b7fcd4bd84832a23fb62a" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "cluster" (
+                "id" SERIAL NOT NULL,
+                "name" character varying NOT NULL,
+                "description" character varying,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                CONSTRAINT "PK_b09d39b9491ce5cb1e8407761fd" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "aid_service_cluster" (
+                "id" SERIAL NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                "clusterId" integer,
+                "aidServiceId" integer,
+                CONSTRAINT "PK_8869d0dd7cc7354d5ddcde25668" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "aid_service" (
+                "id" SERIAL NOT NULL,
+                "name" character varying NOT NULL,
+                "description" character varying,
+                "avatar" character varying,
+                "serviceRate" integer DEFAULT '0',
+                "noOfBookings" integer DEFAULT '0',
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                "profileId" integer,
+                CONSTRAINT "PK_8086806e93e94ac02ba64b0204f" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -141,74 +209,6 @@ export class Migrations1764671769841 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "tag" (
-                "id" SERIAL NOT NULL,
-                "name" character varying NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                CONSTRAINT "PK_8e4052373c579afc1471f526760" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "aid_service_tag" (
-                "id" SERIAL NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                "tagId" integer,
-                "aidServiceId" integer,
-                CONSTRAINT "PK_469ef1b7eb55b34f54c3dda25fc" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "aid_service" (
-                "id" SERIAL NOT NULL,
-                "name" character varying NOT NULL,
-                "description" character varying,
-                "avatar" character varying,
-                "serviceRate" integer DEFAULT '0',
-                "noOfBookings" integer DEFAULT '0',
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                "profileId" integer,
-                CONSTRAINT "PK_8086806e93e94ac02ba64b0204f" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "aid_service_cluster" (
-                "id" SERIAL NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                "clusterId" integer,
-                "aidServiceId" integer,
-                CONSTRAINT "PK_8869d0dd7cc7354d5ddcde25668" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "cluster" (
-                "id" SERIAL NOT NULL,
-                "name" character varying NOT NULL,
-                "description" character varying,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                CONSTRAINT "PK_b09d39b9491ce5cb1e8407761fd" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "profile_cluster" (
-                "id" SERIAL NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                "clusterId" integer,
-                "profileId" integer,
-                CONSTRAINT "PK_569df9b7fcd4bd84832a23fb62a" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
             CREATE TABLE "review_and_rating" (
                 "id" SERIAL NOT NULL,
                 "rating" integer NOT NULL,
@@ -279,6 +279,34 @@ export class Migrations1764671769841 implements MigrationInterface {
             ADD CONSTRAINT "FK_ca49e738c1e64b0c839cae30d4e" FOREIGN KEY ("profileId") REFERENCES "profile"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
+            ALTER TABLE "aid_service_tag"
+            ADD CONSTRAINT "FK_c8e96e96979cd2bf2afd75e91d2" FOREIGN KEY ("tagId") REFERENCES "tag"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_tag"
+            ADD CONSTRAINT "FK_81a7eb4e5de9ec5fc0f0d548b37" FOREIGN KEY ("aidServiceId") REFERENCES "aid_service"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "profile_cluster"
+            ADD CONSTRAINT "FK_d97aad3ecb862bab0f395747f3c" FOREIGN KEY ("clusterId") REFERENCES "cluster"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "profile_cluster"
+            ADD CONSTRAINT "FK_b1e2c1cc3a940ed52b1ea664477" FOREIGN KEY ("profileId") REFERENCES "profile"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_cluster"
+            ADD CONSTRAINT "FK_425b0a6f642f091a9a49975d8f0" FOREIGN KEY ("clusterId") REFERENCES "cluster"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_cluster"
+            ADD CONSTRAINT "FK_bb1c821ee7b4c78c4ca909d657d" FOREIGN KEY ("aidServiceId") REFERENCES "aid_service"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service"
+            ADD CONSTRAINT "FK_bf0c29f8bba419447fde8fbed43" FOREIGN KEY ("profileId") REFERENCES "profile"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "payment_transaction"
             ADD CONSTRAINT "FK_a0df4573f2a0c4d351fea2c5986" FOREIGN KEY ("bookingId") REFERENCES "booking"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -305,34 +333,6 @@ export class Migrations1764671769841 implements MigrationInterface {
         await queryRunner.query(`
             ALTER TABLE "profile"
             ADD CONSTRAINT "FK_2e55eaf05dc6707d1541e7bebf9" FOREIGN KEY ("aidServiceProfileId") REFERENCES "aid_service_profile"("id") ON DELETE CASCADE ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_tag"
-            ADD CONSTRAINT "FK_c8e96e96979cd2bf2afd75e91d2" FOREIGN KEY ("tagId") REFERENCES "tag"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_tag"
-            ADD CONSTRAINT "FK_81a7eb4e5de9ec5fc0f0d548b37" FOREIGN KEY ("aidServiceId") REFERENCES "aid_service"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service"
-            ADD CONSTRAINT "FK_bf0c29f8bba419447fde8fbed43" FOREIGN KEY ("profileId") REFERENCES "profile"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_cluster"
-            ADD CONSTRAINT "FK_425b0a6f642f091a9a49975d8f0" FOREIGN KEY ("clusterId") REFERENCES "cluster"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_cluster"
-            ADD CONSTRAINT "FK_bb1c821ee7b4c78c4ca909d657d" FOREIGN KEY ("aidServiceId") REFERENCES "aid_service"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "profile_cluster"
-            ADD CONSTRAINT "FK_d97aad3ecb862bab0f395747f3c" FOREIGN KEY ("clusterId") REFERENCES "cluster"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "profile_cluster"
-            ADD CONSTRAINT "FK_b1e2c1cc3a940ed52b1ea664477" FOREIGN KEY ("profileId") REFERENCES "profile"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "report"
@@ -380,27 +380,6 @@ export class Migrations1764671769841 implements MigrationInterface {
             ALTER TABLE "report" DROP CONSTRAINT "FK_72e61826547d60306404d4786ea"
         `);
         await queryRunner.query(`
-            ALTER TABLE "profile_cluster" DROP CONSTRAINT "FK_b1e2c1cc3a940ed52b1ea664477"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "profile_cluster" DROP CONSTRAINT "FK_d97aad3ecb862bab0f395747f3c"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_cluster" DROP CONSTRAINT "FK_bb1c821ee7b4c78c4ca909d657d"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_cluster" DROP CONSTRAINT "FK_425b0a6f642f091a9a49975d8f0"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service" DROP CONSTRAINT "FK_bf0c29f8bba419447fde8fbed43"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_tag" DROP CONSTRAINT "FK_81a7eb4e5de9ec5fc0f0d548b37"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "aid_service_tag" DROP CONSTRAINT "FK_c8e96e96979cd2bf2afd75e91d2"
-        `);
-        await queryRunner.query(`
             ALTER TABLE "profile" DROP CONSTRAINT "FK_2e55eaf05dc6707d1541e7bebf9"
         `);
         await queryRunner.query(`
@@ -422,6 +401,27 @@ export class Migrations1764671769841 implements MigrationInterface {
             ALTER TABLE "payment_transaction" DROP CONSTRAINT "FK_a0df4573f2a0c4d351fea2c5986"
         `);
         await queryRunner.query(`
+            ALTER TABLE "aid_service" DROP CONSTRAINT "FK_bf0c29f8bba419447fde8fbed43"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_cluster" DROP CONSTRAINT "FK_bb1c821ee7b4c78c4ca909d657d"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_cluster" DROP CONSTRAINT "FK_425b0a6f642f091a9a49975d8f0"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "profile_cluster" DROP CONSTRAINT "FK_b1e2c1cc3a940ed52b1ea664477"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "profile_cluster" DROP CONSTRAINT "FK_d97aad3ecb862bab0f395747f3c"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_tag" DROP CONSTRAINT "FK_81a7eb4e5de9ec5fc0f0d548b37"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "aid_service_tag" DROP CONSTRAINT "FK_c8e96e96979cd2bf2afd75e91d2"
+        `);
+        await queryRunner.query(`
             ALTER TABLE "auth" DROP CONSTRAINT "FK_ca49e738c1e64b0c839cae30d4e"
         `);
         await queryRunner.query(`
@@ -440,24 +440,6 @@ export class Migrations1764671769841 implements MigrationInterface {
             DROP TABLE "review_and_rating"
         `);
         await queryRunner.query(`
-            DROP TABLE "profile_cluster"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "cluster"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "aid_service_cluster"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "aid_service"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "aid_service_tag"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "tag"
-        `);
-        await queryRunner.query(`
             DROP TABLE "profile"
         `);
         await queryRunner.query(`
@@ -468,6 +450,24 @@ export class Migrations1764671769841 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "payment_transaction"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "aid_service"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "aid_service_cluster"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "cluster"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "profile_cluster"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "aid_service_tag"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "tag"
         `);
         await queryRunner.query(`
             DROP TABLE "profile_wallet"

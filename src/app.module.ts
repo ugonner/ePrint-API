@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -17,17 +17,27 @@ import { ReportModule } from './report/report.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { NotificationModule } from './notifiction/notification.module';
 
+
+export const ormConfigOptions = (process.env.DATABASE_URL ? {
+    type: process.env.DATABASE_TYPE,
+  url: process.env.DATABASE_URL,
+    
+}:  {
+    type: process.env.DATABASE_TYPE,
+    host: process.env.DATABASE_HOST,
+    port: Number(process.env.DATABASE_PORT),
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME
+  
+}) as unknown as TypeOrmModuleAsyncOptions;
+
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        type: "postgres",
-        host: process.env.DATABASE_HOST,
-        port: Number(process.env.DATABASE_PORT),
-        username: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASSWORD,
-        database: process.env.DATABASE_NAME,
+       ...ormConfigOptions,
         entities: ['dist/**/*.entity.js'],
       synchronize: false,
       ssl: process.env.NODE_ENV === 'production' 

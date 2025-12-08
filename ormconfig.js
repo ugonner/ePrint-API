@@ -1,17 +1,25 @@
 
 const dotenv = require("dotenv");
+const { url } = require("inspector");
 const path = require("path");
 const { DataSource } = require("typeorm");
+
 dotenv.config();
 
-const typeOrmConfig = {
-    type: process.env.DATABASE_TYPE,
+const ormConfigOptions = process.env.DATABASE_URL ? {
+  url: process.env.DATABASE_URL,
     
+}:  {
     host: process.env.DATABASE_HOST,
     port: Number(process.env.DATABASE_PORT),
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
+  
+}
+const typeOrmConfig = {
+  ...ormConfigOptions,
+    type: process.env.DATABASE_TYPE,
     autoLoadEntities: true,
     entities: ["dist/**/*.entity.js"],
     migrations: ["dist/migrations/**/*.js"],

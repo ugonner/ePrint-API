@@ -17,7 +17,6 @@ import { PaymentPurpose, PaymentStatus } from './enums/payment.enum';
 import { Profile } from '../entities/user.entity';
 import { ProfileWallet } from '../entities/user-wallet.entity';
 import { BookingService } from '../booking/booking.service';
-import { TraceNotification } from 'mediasoup/node/lib/fbs/consumer';
 import { handleDateQuery } from '../shared/helpers/db';
 import { IQueryResult } from '../shared/interfaces/api-response.interface';
 @Injectable()
