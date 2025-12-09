@@ -16,7 +16,8 @@ import { ReviewModule } from './review/review.module';
 import { ReportModule } from './report/report.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { NotificationModule } from './notifiction/notification.module';
-
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export const ormConfigOptions = (process.env.DATABASE_URL ? {
     type: process.env.DATABASE_TYPE,

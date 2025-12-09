@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IMail } from '../shared/interfaces/email.interface';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -9,6 +9,8 @@ import { MailDTO } from '../mail/dtos/mail.dto';
 import { IQueryResult } from '../shared/interfaces/api-response.interface';
 import { QueryDateDTO } from '../shared/dtos/query-request.dto copy';
 import { dot } from 'node:test/reporters';
+import { AppVersion } from '../entities/app-version.entity';
+import { AppVersionDTO } from './dtos/app-version.dto';
 
 @Injectable()
 export class NotificationService {
@@ -82,5 +84,38 @@ export class NotificationService {
     }
   }
 
-  
+  async updateAppVersion(dto?: AppVersionDTO): Promise<AppVersion> {
+    let newVersion: AppVersion;
+    let errorData: unknown;
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.startTransaction();
+      let appVersion: AppVersion = queryRunner.manager.create(AppVersion, {
+        detail: dto.detail,
+      });
+      if (dto?.appVersionId) {
+        appVersion = await queryRunner.manager.findOneBy(AppVersion, {
+          id: dto.appVersionId,
+        });
+        if (!appVersion) throw new NotFoundException('Version not found');
+      }
+      appVersion.detail = dto.detail;
+      await queryRunner.manager.save(AppVersion, appVersion);
+      await queryRunner.commitTransaction();
+      newVersion = appVersion;
+    } catch (error) {
+      errorData = error;
+
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+      if (errorData) throw errorData;
+      return newVersion;
+    }
+  }
+
+  async getLastAppVersion(): Promise<AppVersion> {
+    const versions = await this.dataSource.getRepository(AppVersion).find({take: 1, order: {id: "DESC"}});
+    return versions[0];
+  }
 }
